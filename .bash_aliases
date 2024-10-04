@@ -98,7 +98,7 @@ clone() {
     echo 'Description:'; read description
 
     # Clone the CX Plugin repository
-    git clone "https://bitbucket.org/codexpertio/cx-plugin/ "$slug" && cd "$slug" || { echo "Failed to clone or move to directory"; return 1; }
+    git clone "https://bitbucket.org/codexpertio/cx-plugin/src/master/" "$slug" && cd "$slug" || { echo "Failed to clone or move to directory"; return 1; }
 
     # If type is client (2), switch to the client branch
     [[ "$type" == 2 ]] && git checkout client
@@ -121,12 +121,6 @@ clone() {
 
 # String replace function
 sr() { find ./ -type f -exec sed -i "s/$1/$2/g" {} \; }
-
-# Clone plugin from Bitbucket and update composer
-cpp() {
-    read -r -p 'Plugin Slug: ' slug
-    git clone "https://sadekur@bitbucket.org/codexpertio/$slug.git" && cd "$slug" && comu
-}
 
 # Git branch prompt
 parse_git_branch() {
