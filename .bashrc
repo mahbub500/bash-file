@@ -185,6 +185,66 @@ cpp() {
     comu; #Composer Update
 }
 
+# Zip Plugin To client folder 
+
+plzip() {
+    local folder_name
+    folder_name=$(basename "$PWD") # Get the current folder name
+
+    # Destination parent path
+    local dest_parent="/home/mahbub/Downloads/Client"
+    local dest_path="$dest_parent/$folder_name"
+    local zip_file="$dest_parent/${folder_name}.zip"
+
+    # Create destination directory if it doesn't exist
+    if [ ! -d "$dest_parent" ]; then
+        echo "Creating destination directory $dest_parent"
+        mkdir -p "$dest_parent"
+    fi
+
+    # Check and delete the existing folder in the Client directory
+    if [ -d "$dest_path" ]; then
+        echo "Removing existing folder $dest_path..."
+        rm -rf "$dest_path"
+    fi
+
+    # Check and delete the existing zip file in the Client directory
+    if [ -f "$zip_file" ]; then
+        echo "Removing existing zip file $zip_file..."
+        rm -f "$zip_file"
+    fi
+
+    # Copy folder to destination
+    echo "Copying the folder to $dest_path..."
+    if cp -r "$PWD" "$dest_path"; then
+        echo "Folder successfully copied to $dest_path."
+    else
+        echo "Failed to copy folder to $dest_path. Please check permissions and disk space."
+        return 1
+    fi
+
+    # Remove .git folder if it exists in the copied folder
+    if [ -d "$dest_path/.git" ]; then
+        echo "Removing .git folder from $dest_path..."
+        rm -rf "$dest_path/.git"
+    fi
+
+    # Remove .gitignore file if it exists in the copied folder
+    if [ -f "$dest_path/.gitignore" ]; then
+        echo "Removing .gitignore file from $dest_path..."
+        rm -f "$dest_path/.gitignore"
+    fi
+
+    # Zip the contents of the copied folder
+    echo "Zipping the contents of the folder..."
+    if (cd "$dest_path" && zip -r "$zip_file" .); then
+        echo "Folder successfully copied, cleaned, and zipped as ${folder_name}.zip in $dest_parent"
+    else
+        echo "Failed to zip the folder contents. Please check permissions and disk space."
+        return 1
+    fi
+}
+
 # Show git branch name
 force_color_prompt=yes
 color_prompt=yes
